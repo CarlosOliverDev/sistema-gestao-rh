@@ -35,6 +35,8 @@ public abstract class Funcionario {
         this.idadeFuncionario = idadeFuncionario;
     }
 
+    public abstract void imprimirDiasTrabalhados();
+
     @Override
     public abstract String toString();
 }
