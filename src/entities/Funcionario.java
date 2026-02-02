@@ -35,8 +35,9 @@ public abstract class Funcionario {
         this.idadeFuncionario = idadeFuncionario;
     }
 
-    public abstract void imprimirDiasTrabalhados();
+    public LocalTime getHorarioDeAlmoco() {
+        return horarioDeAlmoco;
+    }
 
-    @Override
-    public abstract String toString();
+    public abstract void imprimirDiasTrabalhados();
 }

@@ -27,7 +27,7 @@ public final class Estagiario extends Funcionario{
     @Override
     public void imprimirDiasTrabalhados() {
         if(getDiasTrabalhados().isEmpty()) {
-            System.out.println("Nenhum dia de trabalho registrado.");
+            System.out.println("O estagiário " + this.getNomeFuncionario() + " não tem nenhum dia de trabalho registrado.");
         } else {
             System.out.println("Dias trabalhados por " + this.getNomeFuncionario() + ":");
             int dias = 0;

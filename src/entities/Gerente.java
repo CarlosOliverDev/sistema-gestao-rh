@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.util.Set;
 import java.util.TreeSet;
 
-public class Gerente extends Funcionario{
+public final class Gerente extends Funcionario{
     private final Set<LocalDate> diasTrabalhados;
     private double salario = 12_000.00;
 
@@ -35,7 +35,7 @@ public class Gerente extends Funcionario{
     @Override
     public void imprimirDiasTrabalhados() {
         if(getDiasTrabalhados().isEmpty()) {
-            System.out.println("Nenhum dia de trabalho registrado.");
+            System.out.println("O gerente " + this.getNomeFuncionario() + " não tem nenhum dia de trabalho registrado.");
         } else {
             System.out.println("Dias trabalhados por " + this.getNomeFuncionario() + ":");
             int dias = 0;
