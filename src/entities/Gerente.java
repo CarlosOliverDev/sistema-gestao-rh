@@ -1,6 +1,7 @@
 package entities;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -26,9 +27,9 @@ public final class Gerente extends Funcionario{
 
     public void adicionarDiaTrabalhado(LocalDate novoDiaTrabalhado) {
         if(this.diasTrabalhados.add(novoDiaTrabalhado)) {
-            System.out.println("Novo registro de trabalho do gerente " + this.getNomeFuncionario() + " no dia " + novoDiaTrabalhado +".");
+            System.out.println("Novo registro de trabalho do gerente " + this.getNomeFuncionario() + " no dia " + novoDiaTrabalhado.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) +".");
         } else {
-            System.out.println("Gerente " + this.getNomeFuncionario() + " já tem registro no dia " + novoDiaTrabalhado +".");
+            System.out.println("Gerente " + this.getNomeFuncionario() + " já tem registro no dia " + novoDiaTrabalhado.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) +".");
         }
     }
 
@@ -38,15 +39,13 @@ public final class Gerente extends Funcionario{
             System.out.println("O gerente " + this.getNomeFuncionario() + " não tem nenhum dia de trabalho registrado.");
         } else {
             System.out.println("Dias trabalhados por " + this.getNomeFuncionario() + ":");
-            int dias = 0;
-            for(LocalDate diaTrabalhado : getDiasTrabalhados()) {
-                System.out.print(diaTrabalhado + " ");
-                dias++;
-            }
-            if(dias == 1) {
+            if(getDiasTrabalhados().size() == 1) {
                 System.out.println("\nEsse gerente trabalhou por 1 dia.");
             } else {
-                System.out.println("\nEsse gerente trabalhou por " + dias + " dias.");
+                System.out.println("\nEsse gerente trabalhou por " + getDiasTrabalhados().size() + " dias.");
+            }
+            for(LocalDate diaTrabalhado : getDiasTrabalhados()) {
+                System.out.println(diaTrabalhado.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
             }
         }
     }
