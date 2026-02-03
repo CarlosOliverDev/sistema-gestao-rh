@@ -2,34 +2,55 @@ package entities;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import java.util.TreeMap;
 
 public abstract class FuncionarioCLT extends Funcionario{
     private double salario;
-    private LocalTime jornadaTrabalho = LocalTime.of(8 + getHorarioDeAlmoco().getHour(), getHorarioDeAlmoco().getMinute());
-    private LocalTime maxHorasExtras;
-    private final Map<LocalDate, RelatorioHorariosDia> relatoriosDiasTrabalhados;
+    private final LocalTime jornadaTrabalho = LocalTime.of(8 + getHorarioDeAlmoco().getHour(), getHorarioDeAlmoco().getMinute());
+    private final LocalTime maxHorasExtras;
+    private final Map<LocalDate,RelatorioHorariosDia> relatoriosDiasTrabalhados;
 
     public FuncionarioCLT(String nomeFuncionario, int idadeFuncionario, double salario, LocalTime maxHorasExtras) {
         super(nomeFuncionario, idadeFuncionario);
         this.salario = salario;
         this.maxHorasExtras = maxHorasExtras;
-        this.relatoriosDiasTrabalhados = new TreeMap<LocalDate, RelatorioHorariosDia>();
+        this.relatoriosDiasTrabalhados = new TreeMap<LocalDate,RelatorioHorariosDia>();
+    }
+
+    public void adicionarDiaTrabalho(LocalDate novoDiaTrabalhado) {
+        this.relatoriosDiasTrabalhados.put(novoDiaTrabalhado, null);
+    }
+
+    public void imprimirDiasTrabalhados() {
+        if(relatoriosDiasTrabalhados.isEmpty()) {
+            System.out.println("O estagiário " + this.getNomeFuncionario() + " não tem nenhum dia de trabalho registrado.");
+        } else {
+            System.out.println("Dias trabalhados por " + this.getNomeFuncionario() + ":");
+            if(relatoriosDiasTrabalhados.size() == 1) {
+                System.out.println("\nEsse estagiário trabalhou por 1 dia.");
+            } else {
+                System.out.println("\nEsse estagiário trabalhou por " + relatoriosDiasTrabalhados.size() + " dias.");
+            }
+            System.out.println("Dias Registrados:");
+            for(Map.Entry<LocalDate,RelatorioHorariosDia> diasTrabalhados : relatoriosDiasTrabalhados.entrySet()) {
+                System.out.println(diasTrabalhados.getKey().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) + " - Horário de Entrada: " + diasTrabalhados.getValue().getHorarioInicio().format(DateTimeFormatter.ofPattern("HH:mm")) + " - Horário de Entrada: " + diasTrabalhados.getValue().getHorarioFim().format(DateTimeFormatter.ofPattern("HH:mm")));
+            }
+        }
     }
 
     @Override
-    public void adicionarDiaTrabalhado(LocalDate novoDiaTrabalhado) {
-        this.relatoriosDiasTrabalhados.put(novoDiaTrabalhado, null);
+    public String toString() {
+        return  "ID: " + this.getId() +
+                "\nNome: " + this.getNomeFuncionario() +
+                "\nIdade: " + this.getIdadeFuncionario() +
+                "\nCargo: " + this.getClass().getSimpleName() +
+                "\nSalário: R$ " + String.format("%.2f",getSalario());
     }
 
     public void adicionarDiaTrabalhadoComHorario(LocalDate novoDiaTrabalhado, RelatorioHorariosDia relatorioHorariosDia) {
         this.relatoriosDiasTrabalhados.put(novoDiaTrabalhado, relatorioHorariosDia);
-    }
-
-    @Override
-    public void imprimirDiasTrabalhados() {
-
     }
 
     public int totalHorasJornadaDia() {
@@ -59,16 +80,8 @@ public abstract class FuncionarioCLT extends Funcionario{
         return jornadaTrabalho;
     }
 
-    public void setJornadaTrabalho(LocalTime jornadaTrabalho) {
-        this.jornadaTrabalho = jornadaTrabalho;
-    }
-
     public LocalTime getMaxHorasExtras() {
         return maxHorasExtras;
-    }
-
-    public void setMaxHorasExtras(LocalTime maxHorasExtras) {
-        this.maxHorasExtras = maxHorasExtras;
     }
 
     public Map<LocalDate, RelatorioHorariosDia> getRelatoriosDiasTrabalhados() {

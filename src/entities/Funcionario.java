@@ -1,6 +1,5 @@
 package entities;
 
-import java.time.LocalDate;
 import java.time.LocalTime;
 
 public abstract class Funcionario {
@@ -40,7 +39,11 @@ public abstract class Funcionario {
         return horarioDeAlmoco;
     }
 
-    public abstract void adicionarDiaTrabalhado(LocalDate novoDiaTrabalhado);
-
-    public abstract void imprimirDiasTrabalhados();
+    @Override
+    public String toString() {
+        return  "ID: " + this.getId() +
+                "\nNome: " + this.getNomeFuncionario() +
+                "\nIdade: " + this.getIdadeFuncionario() +
+                "\nCargo: " + this.getClass().getSimpleName();
+    }
 }
