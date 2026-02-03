@@ -1,4 +1,4 @@
-package entities;
-
-public class Assistente extends FuncionarioCLT{
-}
+//package entities;
+//
+//public class Assistente extends FuncionarioCLT{
+//}

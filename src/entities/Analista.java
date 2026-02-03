@@ -1,4 +1,4 @@
-package entities;
-
-public class Analista extends FuncionarioCLT{
-}
+//package entities;
+//
+//public class Analista extends FuncionarioCLT{
+//}

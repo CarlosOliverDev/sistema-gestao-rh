@@ -1,4 +1,4 @@
-package entities;
-
-public class Coordenador extends FuncionarioCLT{
-}
+//package entities;
+//
+//public class Coordenador extends FuncionarioCLT{
+//}
