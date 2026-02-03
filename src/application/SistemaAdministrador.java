@@ -5,8 +5,8 @@ import entities.Funcionario;
 import entities.FuncionarioCLT;
 import entities.Gerente;
 import exceptions.RegraNegocioException;
+import java.time.DateTimeException;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.InputMismatchException;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -14,7 +14,6 @@ import java.util.Scanner;
 
 public class SistemaAdministrador {
     public static Scanner scanner = new Scanner(System.in);
-    public static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
     public static Map<Integer, Funcionario> listaFuncionario = new LinkedHashMap<Integer, Funcionario>();
 
     public static void main(String[] args) {
@@ -30,7 +29,7 @@ public class SistemaAdministrador {
         do {
             System.out.println("\nMenu:");
             System.out.print("1-Registrar um novo funcionário\n2-Registrar um dia de trabalho\n3-Listar os funcionários\n4-Buscar informações de um funcionário\n5-Fechar o programa\n");
-            opcao = gerarInteiro("Escolha o número de uma das opções: ");
+            opcao = gerarInteiro("\nEscolha o número de uma das opções: ");
             escolherOpcao(opcao);
         } while(opcao != 5);
         System.out.println("Programa finalizado.");
@@ -70,7 +69,7 @@ public class SistemaAdministrador {
         do {
             System.out.println("\nNúmero dos Cargos:");
             System.out.println("1-Estagiário\n2-Assistente\n3-Analista\n4-Coordenador\n5-Gerente");
-            cargoFuncionario = gerarInteiro("Selecione o número do cargo do novo funcionário: ");
+            cargoFuncionario = gerarInteiro("\nSelecione o número do cargo do novo funcionário: ");
             id = criarNovoFuncionario(cargoFuncionario, nomeFuncionario, idadeFuncionario);
         } while(id == 0);
         System.out.println("\nInformações do Novo " + listaFuncionario.get(id).getClass().getSimpleName() + ":");
@@ -108,22 +107,31 @@ public class SistemaAdministrador {
 
     public static void registrarDiaDeTrabalho() {
         if(listaFuncionario.isEmpty()) {
-            System.out.println("\nNão é possível registrar um dia de trabalho, pois nenhum funcionário foi registrado ainda.");
+            System.out.println("Não é possível registrar um dia de trabalho, pois nenhum funcionário foi registrado ainda.");
         } else {
             int escolha;
             do {
                 System.out.println("\n-Registro Trabalho-");
                 System.out.println("1-Registrar Dia de Trabalho\n2-Adicionar Horas Trabalhadas\n3-Adicionar Horas Extras");
-                escolha = gerarInteiro("Digite o número de uma das opções: ");
+                escolha = gerarInteiro("\nDigite o número de uma das opções: ");
                 switch(escolha) {
                     case 1:
                         registrarNovoDiaTrabalho();
                         break;
                     case 2:
-                        adicionarHorasTrabalhadas();
+                        try {
+                            adicionarHorasTrabalhadas();
+                        } catch (RegraNegocioException e) {
+                            System.out.println("\nErro: " + e.getMessage());
+                        }
                         break;
                     case 3:
-                        adicionarHorasExtras();
+                        try {
+                            adicionarHorasExtras();
+                        } catch (RegraNegocioException e) {
+                            System.out.println("\nErro: " + e.getMessage());
+                        }
+                        break;
                     default:
                         System.out.println("Valor inválido, digite um número entre as opções de registro de trabalho.");
                 }
@@ -147,7 +155,7 @@ public class SistemaAdministrador {
     }
 
     public static void adicionarHorasTrabalhadas() throws RegraNegocioException {
-        int idFuncionario = gerarInteiro("Digite o ID do funcionário: ");
+        int idFuncionario = gerarInteiro("\nDigite o ID do funcionário: ");
         if(!listaFuncionario.containsKey(idFuncionario)) {
             System.out.println("Não existe um funcionário com esse ID.");
         } else {
@@ -155,7 +163,7 @@ public class SistemaAdministrador {
                 //TODO
                 adicionarHoras(idFuncionario);
             } else {
-                throw new RegraNegocioException("Erro: Gerentes e Estagiários não são permitidos a registrar horas e bater ponto.");
+                throw new RegraNegocioException("Gerentes e Estagiários não são permitidos a registrar horas e bater ponto.");
             }
         }
     }
@@ -168,11 +176,17 @@ public class SistemaAdministrador {
         //TODO
     }
 
-    public static LocalDate adicionarData() {
-        int dia = gerarInteiro("Digite o número do dia que deseja registrar: ");
-        int mes = gerarInteiro("Digite o número do mês que deseja registrar: ");
-        int ano = gerarInteiro("Digite o ano que deseja registrar: ");
-        return LocalDate.of(ano, mes, dia);
+    public static LocalDate adicionarData() throws DateTimeException {
+        while(true) {
+            try {
+                int dia = gerarInteiro("Digite o número do dia que deseja registrar: ");
+                int mes = gerarInteiro("Digite o número do mês que deseja registrar: ");
+                int ano = gerarInteiro("Digite o ano que deseja registrar: ");
+                return LocalDate.of(ano, mes, dia);
+            } catch (DateTimeException e) {
+                System.out.println("Erro: Não é possível registrar essa data. Tente uma data existente.\n");
+            }
+        }
     }
 
     public static int gerarInteiro(String mensagem) throws InputMismatchException {
@@ -184,7 +198,7 @@ public class SistemaAdministrador {
             return escolha;
             } catch (InputMismatchException e) {
                 scanner.nextLine();
-                System.out.println("Erro: Entrada de dados inválida, por favor, utilize um número inteiro.\n");
+                System.out.println("Erro: Entrada de dados inválida, por favor, utilize um número inteiro.");
             }
         }
     }
