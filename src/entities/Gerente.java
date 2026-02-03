@@ -25,6 +25,7 @@ public final class Gerente extends Funcionario{
         this.salario = salario;
     }
 
+    @Override
     public void adicionarDiaTrabalhado(LocalDate novoDiaTrabalhado) {
         if(this.diasTrabalhados.add(novoDiaTrabalhado)) {
             System.out.println("Novo registro de trabalho do gerente " + this.getNomeFuncionario() + " no dia " + novoDiaTrabalhado.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) +".");

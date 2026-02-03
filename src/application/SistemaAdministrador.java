@@ -2,7 +2,10 @@ package application;
 
 import entities.Estagiario;
 import entities.Funcionario;
+import entities.FuncionarioCLT;
 import entities.Gerente;
+import exceptions.RegraNegocioException;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.InputMismatchException;
 import java.util.LinkedHashMap;
@@ -26,7 +29,7 @@ public class SistemaAdministrador {
         int opcao = 0;
         do {
             System.out.println("\nMenu:");
-            System.out.println("1-Registrar um novo funcionário\n2-Registrar um dia de trabalho\n3-Listar os funcionários\n4-Buscar informações de um funcionário\n5-Fechar o programa\n");
+            System.out.print("1-Registrar um novo funcionário\n2-Registrar um dia de trabalho\n3-Listar os funcionários\n4-Buscar informações de um funcionário\n5-Fechar o programa\n");
             opcao = gerarInteiro("Escolha o número de uma das opções: ");
             escolherOpcao(opcao);
         } while(opcao != 5);
@@ -39,7 +42,7 @@ public class SistemaAdministrador {
                 registrarNovoFuncionario();
                 break;
             case 2:
-                //registrarDiaDeTrabalho();
+                registrarDiaDeTrabalho();
                 break;
             case 3:
                 //listarFuncionarios();
@@ -101,6 +104,75 @@ public class SistemaAdministrador {
                 System.out.println("Valor inválido, digite um número entre as opções de cargo.");
                 return 0;
         }
+    }
+
+    public static void registrarDiaDeTrabalho() {
+        if(listaFuncionario.isEmpty()) {
+            System.out.println("\nNão é possível registrar um dia de trabalho, pois nenhum funcionário foi registrado ainda.");
+        } else {
+            int escolha;
+            do {
+                System.out.println("\n-Registro Trabalho-");
+                System.out.println("1-Registrar Dia de Trabalho\n2-Adicionar Horas Trabalhadas\n3-Adicionar Horas Extras");
+                escolha = gerarInteiro("Digite o número de uma das opções: ");
+                switch(escolha) {
+                    case 1:
+                        registrarNovoDiaTrabalho();
+                        break;
+                    case 2:
+                        adicionarHorasTrabalhadas();
+                        break;
+                    case 3:
+                        adicionarHorasExtras();
+                    default:
+                        System.out.println("Valor inválido, digite um número entre as opções de registro de trabalho.");
+                }
+            } while(escolha < 1 || escolha > 3);
+        }
+    }
+
+    public static void registrarNovoDiaTrabalho() {
+        int idFuncionario = gerarInteiro("\nDigite o ID do funcionário: ");
+        if(!listaFuncionario.containsKey(idFuncionario)) {
+            System.out.println("Não existe um funcionário com esse ID.");
+        } else {
+            if(listaFuncionario.get(idFuncionario) instanceof FuncionarioCLT) {
+                System.out.println("Registrar o dia: ");
+                adicionarHoras(idFuncionario);
+            } else {
+                LocalDate data = adicionarData();
+                listaFuncionario.get(idFuncionario).adicionarDiaTrabalhado(data);
+            }
+        }
+    }
+
+    public static void adicionarHorasTrabalhadas() throws RegraNegocioException {
+        int idFuncionario = gerarInteiro("Digite o ID do funcionário: ");
+        if(!listaFuncionario.containsKey(idFuncionario)) {
+            System.out.println("Não existe um funcionário com esse ID.");
+        } else {
+            if(listaFuncionario.get(idFuncionario) instanceof FuncionarioCLT) {
+                //TODO
+                adicionarHoras(idFuncionario);
+            } else {
+                throw new RegraNegocioException("Erro: Gerentes e Estagiários não são permitidos a registrar horas e bater ponto.");
+            }
+        }
+    }
+
+    public static void adicionarHoras(int idFuncionario) {
+        //TODO REGISTRAR HORAS CASO JÁ TIVER USAR MÉTODO adicionarHorasExtras()
+    }
+
+    public static void adicionarHorasExtras() {
+        //TODO
+    }
+
+    public static LocalDate adicionarData() {
+        int dia = gerarInteiro("Digite o número do dia que deseja registrar: ");
+        int mes = gerarInteiro("Digite o número do mês que deseja registrar: ");
+        int ano = gerarInteiro("Digite o ano que deseja registrar: ");
+        return LocalDate.of(ano, mes, dia);
     }
 
     public static int gerarInteiro(String mensagem) throws InputMismatchException {

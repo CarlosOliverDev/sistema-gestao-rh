@@ -17,11 +17,12 @@ public final class Estagiario extends Funcionario{
         return diasTrabalhados;
     }
 
+    @Override
     public void adicionarDiaTrabalhado(LocalDate novoDiaTrabalhado) {
         if(this.diasTrabalhados.add(novoDiaTrabalhado)) {
-            System.out.println("Novo registro de trabalho do estagiário " + this.getNomeFuncionario() + " no dia " + novoDiaTrabalhado.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) +".");
+            System.out.println("\nNovo registro de trabalho do estagiário " + this.getNomeFuncionario() + " no dia " + novoDiaTrabalhado.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) +".");
         } else {
-            System.out.println("Estagiário " + this.getNomeFuncionario() + " já tem registro no dia " + novoDiaTrabalhado.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) +".");
+            System.out.println("\nEstagiário " + this.getNomeFuncionario() + " já tem registro no dia " + novoDiaTrabalhado.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) +".");
         }
     }
 
