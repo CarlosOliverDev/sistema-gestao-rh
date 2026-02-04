@@ -24,23 +24,31 @@ public abstract class FuncionarioCLT extends Funcionario{
         System.out.println("Dia: " + novoDiaTrabalhado.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) + "\n" + this.relatoriosDiasTrabalhados.get(novoDiaTrabalhado));
     }
 
+    public void imprimirTodosDiaTrabalho(LocalDate novoDiaTrabalhado) {
+        System.out.println("Dia: " + novoDiaTrabalhado.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) + "\n" + this.relatoriosDiasTrabalhados.get(novoDiaTrabalhado));
+    }
+
     public void adicionarDiaTrabalho(LocalDate novoDiaTrabalhado) {
         this.relatoriosDiasTrabalhados.put(novoDiaTrabalhado, null);
     }
 
     public void imprimirDiasTrabalhados() {
         if(relatoriosDiasTrabalhados.isEmpty()) {
-            System.out.println("O estagiário " + this.getNomeFuncionario() + " não tem nenhum dia de trabalho registrado.");
+            System.out.println("O " + this.getClass().getSimpleName() + " " + this.getNomeFuncionario() + " não tem nenhum dia de trabalho registrado.\n");
         } else {
-            System.out.println("Dias trabalhados por " + this.getNomeFuncionario() + ":");
+            System.out.println("\nDias trabalhados por " + this.getNomeFuncionario() + ":");
             if(relatoriosDiasTrabalhados.size() == 1) {
-                System.out.println("\nEsse estagiário trabalhou por 1 dia.");
+                System.out.println("Esse " + this.getClass().getSimpleName() + " trabalhou por 1 dia.");
             } else {
-                System.out.println("\nEsse estagiário trabalhou por " + relatoriosDiasTrabalhados.size() + " dias.");
+                System.out.println("Esse " + this.getClass().getSimpleName() + " trabalhou por " + relatoriosDiasTrabalhados.size() + " dias.");
             }
-            System.out.println("Dias Registrados:");
+            System.out.println("\nDias Registrados:");
+            int dias = 1;
             for(Map.Entry<LocalDate,RelatorioHorariosDia> diasTrabalhados : relatoriosDiasTrabalhados.entrySet()) {
-                System.out.println(diasTrabalhados.getKey().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) + " - Horário de Entrada: " + diasTrabalhados.getValue().getHorarioInicio().format(DateTimeFormatter.ofPattern("HH:mm")) + " - Horário de Entrada: " + diasTrabalhados.getValue().getHorarioFim().format(DateTimeFormatter.ofPattern("HH:mm")));
+                System.out.println("Registro dia " + dias + ":");
+                imprimirTodosDiaTrabalho(diasTrabalhados.getKey());
+                dias++;
+                System.out.println();
             }
         }
     }

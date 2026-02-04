@@ -28,7 +28,7 @@ public class SistemaAdministrador {
         int opcao = 0;
         do {
             System.out.println("\nMenu do Portal de Recursos Humanos:");
-            System.out.print("1-Registrar um novo funcionário\n2-Registrar dia ou horas de trabalho\n3-Listar os funcionários\n4-Buscar informações de um funcionário\n5-Fechar o programa\n");
+            System.out.print("1-Registrar um novo funcionário\n2-Registrar dia ou horas de trabalho de um funcionário\n3-Listar os funcionários\n4-Buscar informações de um funcionário\n5-Fechar o programa\n");
             opcao = gerarInteiro("\nEscolha o número de uma das opções: ");
             escolherOpcao(opcao);
         } while(opcao != 5);
@@ -47,8 +47,7 @@ public class SistemaAdministrador {
                 listarFuncionarios();
                 break;
             case 4:
-                //buscarInfoFuncionario();
-                //TODO
+                buscarInfoFuncionario();
                 break;
             case 5:
                 break;
@@ -149,7 +148,7 @@ public class SistemaAdministrador {
                         adicionarHorasNovoDiaTrabalho(idFuncionario, data);
                         imprimirNovoRegistroTrabalho(idFuncionario, data);
                     } catch (RegraNegocioException e) {
-                        System.out.println("Erro:" + e.getMessage());
+                        System.out.println("Erro: " + e.getMessage());
                     }
                 } else {
                     System.out.println("O funcionário já tem registro nesse dia.");
@@ -160,7 +159,7 @@ public class SistemaAdministrador {
     }
 
     private static void imprimirNovoRegistroTrabalho(int idFuncionario, LocalDate data) {
-        System.out.println("\nNovo Registro de Trabalho deo " + listaFuncionario.get(idFuncionario).getClass().getSimpleName() + " " + listaFuncionario.get(idFuncionario).getNomeFuncionario() + ":");
+        System.out.println("\nNovo Registro de Trabalho do " + listaFuncionario.get(idFuncionario).getClass().getSimpleName() + " " + listaFuncionario.get(idFuncionario).getNomeFuncionario() + ":");
         ((FuncionarioCLT) listaFuncionario.get(idFuncionario)).imprimirDiaTrabalho(data);
     }
 
@@ -176,12 +175,13 @@ public class SistemaAdministrador {
         } catch (RegraNegocioException e) {
             System.out.println("Erro: " + e.getMessage());
         }
-        int duracao = (horarioFim.getHour()*60) + (horarioFim.getMinute()) - (horarioInicio.getHour()*60) + (horarioInicio.getMinute());
+
+        int duracao = ((horarioFim.getHour() * 60) + horarioFim.getMinute()) - ((horarioInicio.getHour() * 60) + horarioInicio.getMinute());
 
         if(((FuncionarioCLT) listaFuncionario.get(idFuncionario)).totalHorasPermitidasDia() >= duracao || ((FuncionarioCLT) listaFuncionario.get(idFuncionario)).totalHorasJornadaDia() >= duracao) {
             RelatorioHorariosDia relatorio = new RelatorioHorariosDia(horarioInicio, horarioFim);
             ((FuncionarioCLT) listaFuncionario.get(idFuncionario)).adicionarDiaTrabalhadoComHorario(data, relatorio);
-            if(((FuncionarioCLT) listaFuncionario.get(idFuncionario)).totalHorasPermitidasDia() >= duracao) {
+            if(duracao > ((FuncionarioCLT) listaFuncionario.get(idFuncionario)).totalHorasJornadaDia()) {
                 adicionarHorasExtrasNovoDiaTrabalho(idFuncionario, data, horarioInicio, horarioFim);
             }
         } else {
@@ -256,13 +256,77 @@ public class SistemaAdministrador {
         if(listaFuncionario.isEmpty()) {
             System.out.println("Não é possível listar os funcionários, pois nenhum funcionário foi registrado.");
         } else {
-            System.out.println("\n-Lista de Funcionários Registrados-");
+            System.out.print("\n-Lista de Funcionários Registrados-");
             int indice = 1;
             for(Map.Entry<Integer,Funcionario> funcionarioEntry : listaFuncionario.entrySet()) {
                 System.out.println("\nFuncionário " + indice + ":");
                 System.out.println(funcionarioEntry.getValue().imprimirInfosBasicas());
                 indice++;
             }
+        }
+    }
+
+    public static void buscarInfoFuncionario() {
+        if(listaFuncionario.isEmpty()) {
+            System.out.println("Não é possível buscar informações de algum funcionário, pois nenhum funcionário foi registrado.");
+        } else {
+            int idFuncionario = gerarInteiro("\nDigite o ID do funcionário: ");
+            if(!listaFuncionario.containsKey(idFuncionario)) {
+                System.out.println("Não existe um funcionário com esse ID.");
+            } else {
+                System.out.println(listaFuncionario.get(idFuncionario).imprimirInfosBasicas());
+                buscarInfo(idFuncionario);
+            }
+        }
+    }
+
+    public static void buscarInfo(int idFuncionario) {
+        int opcao = 0;
+        do {
+            System.out.print("\n-Buscar Informações do Funcionário-");
+            System.out.print("\n1-Listar os dados de todos os registros de horas desse funcionário\n2-Remover usuário\n3-Voltar ao menu\n");
+            opcao = gerarInteiro("\nEscolha o número de uma das opções: ");
+            switch(opcao) {
+                case 1:
+                    try {
+                        listarRegistrosFuncionario(idFuncionario);
+                    } catch (RegraNegocioException e) {
+                        System.out.println("Erro: " + e.getMessage());
+                    }
+                    break;
+                case 2:
+                    int removeu = removerFuncionario(idFuncionario);
+                    if(removeu == 0) {
+                        break;
+                    }
+                    return;
+                case 3:
+                    break;
+                default:
+                    System.out.println("Por favor, selecione um número de 1 a 3.");
+            }
+        } while(opcao != 3);
+    }
+
+    public static void listarRegistrosFuncionario(int idFuncionario) throws RegraNegocioException{
+        if(listaFuncionario.get(idFuncionario) instanceof FuncionarioCLT) {
+            ((FuncionarioCLT) listaFuncionario.get(idFuncionario)).imprimirDiasTrabalhados();
+        } else {
+            throw new RegraNegocioException(listaFuncionario.get(idFuncionario).getClass().getSimpleName() + "s não tem dias de trabalhos registrados, pois não podem ter registros de horários e não podem bater ponto.");
+        }
+    }
+
+    public static int removerFuncionario(int idFuncionario) {
+        System.out.println(listaFuncionario.get(idFuncionario).imprimirInfosBasicas());
+        System.out.print("\nRealmente deseja remover esse funcionário? (s/n): ");
+        char confirmar = scanner.next().charAt(0);
+        if(confirmar == 's' || confirmar == 'S') {
+            System.out.println("Usuário " + listaFuncionario.get(idFuncionario).getNomeFuncionario() + " removido.");
+            listaFuncionario.remove(idFuncionario);
+            return 1;
+        } else {
+            System.out.println("Remoção cancelada.");
+            return 0;
         }
     }
 }
