@@ -19,6 +19,21 @@ public abstract class FuncionarioCLT extends Funcionario{
         this.relatoriosDiasTrabalhados = new TreeMap<LocalDate,RelatorioHorariosDia>();
     }
 
+    public void adicionarDiaTrabalhadoComHorario(LocalDate novoDiaTrabalhado, RelatorioHorariosDia relatorioHorariosDia) {
+        this.relatoriosDiasTrabalhados.put(novoDiaTrabalhado, relatorioHorariosDia);
+    }
+
+    public void excluirDataRelatorioTrabalho(LocalDate data) {
+        this.getRelatoriosDiasTrabalhados().remove(data);
+    }
+
+    public boolean existeDataRelatorioTrabalho(LocalDate data) {
+        if(this.getRelatoriosDiasTrabalhados().containsKey(data)) {
+            return true;
+        }
+        return false;
+    }
+
     public void imprimirDiaTrabalho(LocalDate novoDiaTrabalhado) {
         super.imprimirInfosBasicas();
         System.out.println("Dia: " + novoDiaTrabalhado.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) + "\n" + this.relatoriosDiasTrabalhados.get(novoDiaTrabalhado));
@@ -28,13 +43,9 @@ public abstract class FuncionarioCLT extends Funcionario{
         System.out.println("Dia: " + novoDiaTrabalhado.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) + "\n" + this.relatoriosDiasTrabalhados.get(novoDiaTrabalhado));
     }
 
-    public void adicionarDiaTrabalho(LocalDate novoDiaTrabalhado) {
-        this.relatoriosDiasTrabalhados.put(novoDiaTrabalhado, null);
-    }
-
     public void imprimirDiasTrabalhados() {
         if(relatoriosDiasTrabalhados.isEmpty()) {
-            System.out.println("O " + this.getClass().getSimpleName() + " " + this.getNomeFuncionario() + " não tem nenhum dia de trabalho registrado.\n");
+            System.out.println("O " + this.getClass().getSimpleName() + " " + this.getNomeFuncionario() + " não tem nenhum dia de trabalho registrado.");
         } else {
             System.out.println("\nDias trabalhados por " + this.getNomeFuncionario() + ":");
             if(relatoriosDiasTrabalhados.size() == 1) {
@@ -42,13 +53,13 @@ public abstract class FuncionarioCLT extends Funcionario{
             } else {
                 System.out.println("Esse " + this.getClass().getSimpleName() + " trabalhou por " + relatoriosDiasTrabalhados.size() + " dias.");
             }
-            System.out.println("\nDias Registrados:");
+            System.out.print("\nDias Registrados:");
             int dias = 1;
             for(Map.Entry<LocalDate,RelatorioHorariosDia> diasTrabalhados : relatoriosDiasTrabalhados.entrySet()) {
-                System.out.println("Registro dia " + dias + ":");
+                System.out.println("\nRegistro dia " + dias + ":");
                 imprimirTodosDiaTrabalho(diasTrabalhados.getKey());
                 dias++;
-                System.out.println();
+                ;
             }
         }
     }
@@ -62,27 +73,12 @@ public abstract class FuncionarioCLT extends Funcionario{
                 "\nSalário: R$ " + String.format("%.2f",getSalario());
     }
 
-    public void adicionarDiaTrabalhadoComHorario(LocalDate novoDiaTrabalhado, RelatorioHorariosDia relatorioHorariosDia) {
-        this.relatoriosDiasTrabalhados.put(novoDiaTrabalhado, relatorioHorariosDia);
-    }
-
     public int totalHorasJornadaDia() {
         return (getJornadaTrabalho().getHour()*60) + getJornadaTrabalho().getMinute();
     }
 
     public int totalHorasPermitidasDia() {
         return (getJornadaTrabalho().getHour() + this.getMaxHorasExtras().getHour()) * 60 + (getJornadaTrabalho().getMinute() + this.getMaxHorasExtras().getMinute());
-    }
-
-    public boolean existeDataRelatorioTrabalho(LocalDate data) {
-        if(this.getRelatoriosDiasTrabalhados().containsKey(data)) {
-            return true;
-        }
-        return false;
-    }
-
-    public void excluirDataRelatorioTrabalho(LocalDate data) {
-        this.getRelatoriosDiasTrabalhados().remove(data);
     }
 
     public double getSalario() {

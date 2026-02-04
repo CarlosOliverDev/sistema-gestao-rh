@@ -81,7 +81,7 @@ public class SistemaAdministrador {
         System.out.println(listaFuncionario.get(id));
 
         System.out.print("\nDeseja confimar o registro do novo funcionário? (s/n): ");
-        char confirmar = scanner.next().charAt(0);
+        char confirmar = scanner.nextLine().charAt(0);
         if(confirmar == 's' || confirmar == 'S') {
             System.out.println("Registro do Novo " + listaFuncionario.get(id).getClass().getSimpleName() + " Finalizado.");
         } else {
@@ -142,7 +142,6 @@ public class SistemaAdministrador {
             if(listaFuncionario.get(idFuncionario) instanceof FuncionarioCLT) {
                 LocalDate data = gerarData();
                 if(!((FuncionarioCLT) listaFuncionario.get(idFuncionario)).existeDataRelatorioTrabalho(data)) {
-                    ((FuncionarioCLT) listaFuncionario.get(idFuncionario)).adicionarDiaTrabalho(data);
                     System.out.println("Data - " + data.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
                     try {
                         adicionarHorasNovoDiaTrabalho(idFuncionario, data);
@@ -170,10 +169,10 @@ public class SistemaAdministrador {
         System.out.println("\n-Fim do Expediente-");
         LocalTime horarioFim = gerarHorasEMinutos("Digite o horário que o funcionário finalizou o trabalho: ");
         System.out.println("Fim do Expediente - " + horarioFim.format(DateTimeFormatter.ofPattern("HH:mm")));
-        try {
-            compararHorasJornada(horarioInicio, horarioFim);
-        } catch (RegraNegocioException e) {
-            System.out.println("Erro: " + e.getMessage());
+
+        if(horarioInicio.isAfter(horarioFim) || horarioInicio.equals(horarioFim)) {
+            ((FuncionarioCLT) listaFuncionario.get(idFuncionario)).excluirDataRelatorioTrabalho(data);
+            throw new RegraNegocioException("Horário de fim de expediente precisa ser depois do horário de início de expediente.");
         }
 
         int duracao = ((horarioFim.getHour() * 60) + horarioFim.getMinute()) - ((horarioInicio.getHour() * 60) + horarioInicio.getMinute());
@@ -196,12 +195,6 @@ public class SistemaAdministrador {
         horarioFimHoraExtra = horarioFimHoraExtra.minus((horarioFimJornada.getHour() * 60) + horarioFimJornada.getMinute(),ChronoUnit.MINUTES);
         relatorio.setHorasExtras(horarioFimHoraExtra);
         ((FuncionarioCLT) listaFuncionario.get(idFuncionario)).adicionarDiaTrabalhadoComHorario(data, relatorio);
-    }
-
-    public static void compararHorasJornada(LocalTime horarioInicio, LocalTime horarioFim) throws RegraNegocioException{
-        if(horarioInicio.isAfter(horarioFim) || horarioInicio.equals(horarioFim)) {
-            throw new RegraNegocioException("Horário de fim de expediente precisa ser depois do horário de início de expediente.");
-        }
     }
 
     public static int gerarInteiro(String mensagem) throws InputMismatchException {
@@ -319,7 +312,7 @@ public class SistemaAdministrador {
     public static int removerFuncionario(int idFuncionario) {
         System.out.println(listaFuncionario.get(idFuncionario).imprimirInfosBasicas());
         System.out.print("\nRealmente deseja remover esse funcionário? (s/n): ");
-        char confirmar = scanner.next().charAt(0);
+        char confirmar = scanner.nextLine().charAt(0);
         if(confirmar == 's' || confirmar == 'S') {
             System.out.println("Usuário " + listaFuncionario.get(idFuncionario).getNomeFuncionario() + " removido.");
             listaFuncionario.remove(idFuncionario);

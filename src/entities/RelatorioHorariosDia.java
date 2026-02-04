@@ -4,8 +4,8 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
 public class RelatorioHorariosDia {
-    private LocalTime horarioInicio;
-    private LocalTime horarioFim;
+    private final LocalTime horarioInicio;
+    private final LocalTime horarioFim;
     private LocalTime horasExtras = LocalTime.of(0,0);
 
     public RelatorioHorariosDia(LocalTime horarioInicio, LocalTime horarioFim) {
