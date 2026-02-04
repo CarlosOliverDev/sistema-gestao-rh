@@ -17,8 +17,16 @@ public abstract class Funcionario {
         ID++;
     }
 
+    public String imprimirInfosBasicas() {
+        return "Nome: " + this.getNomeFuncionario() + ", Cargo: " + this.getClass().getSimpleName() + ".";
+    }
+
     public int getId() {
         return id;
+    }
+
+    public void diminuirID() {
+        ID--;
     }
 
     public String getNomeFuncionario() {

@@ -19,6 +19,11 @@ public abstract class FuncionarioCLT extends Funcionario{
         this.relatoriosDiasTrabalhados = new TreeMap<LocalDate,RelatorioHorariosDia>();
     }
 
+    public void imprimirDiaTrabalho(LocalDate novoDiaTrabalhado) {
+        super.imprimirInfosBasicas();
+        System.out.println("Dia: " + novoDiaTrabalhado.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) + "\n" + this.relatoriosDiasTrabalhados.get(novoDiaTrabalhado));
+    }
+
     public void adicionarDiaTrabalho(LocalDate novoDiaTrabalhado) {
         this.relatoriosDiasTrabalhados.put(novoDiaTrabalhado, null);
     }
@@ -66,6 +71,10 @@ public abstract class FuncionarioCLT extends Funcionario{
             return true;
         }
         return false;
+    }
+
+    public void excluirDataRelatorioTrabalho(LocalDate data) {
+        this.getRelatoriosDiasTrabalhados().remove(data);
     }
 
     public double getSalario() {
