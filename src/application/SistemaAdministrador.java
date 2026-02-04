@@ -44,8 +44,7 @@ public class SistemaAdministrador {
                 registrarDiaDeTrabalho();
                 break;
             case 3:
-                //listarFuncionarios();
-                //TODO
+                listarFuncionarios();
                 break;
             case 4:
                 //buscarInfoFuncionario();
@@ -161,7 +160,7 @@ public class SistemaAdministrador {
     }
 
     private static void imprimirNovoRegistroTrabalho(int idFuncionario, LocalDate data) {
-        System.out.println("\nNovo Registro de Trabalho deo " + listaFuncionario.get(idFuncionario).getClass().getSimpleName() + listaFuncionario.get(idFuncionario).getNomeFuncionario() + ":");
+        System.out.println("\nNovo Registro de Trabalho deo " + listaFuncionario.get(idFuncionario).getClass().getSimpleName() + " " + listaFuncionario.get(idFuncionario).getNomeFuncionario() + ":");
         ((FuncionarioCLT) listaFuncionario.get(idFuncionario)).imprimirDiaTrabalho(data);
     }
 
@@ -249,6 +248,20 @@ public class SistemaAdministrador {
                 System.out.println("Erro: Não foi possível registrar esse horário, utilize as horas de 0 a 23, e os minutos de 0 a 59.\n");
             } catch (RegraNegocioException e) {
                 System.out.println("Erro: " + e.getMessage());
+            }
+        }
+    }
+
+    public static void listarFuncionarios() {
+        if(listaFuncionario.isEmpty()) {
+            System.out.println("Não é possível listar os funcionários, pois nenhum funcionário foi registrado.");
+        } else {
+            System.out.println("\n-Lista de Funcionários Registrados-");
+            int indice = 1;
+            for(Map.Entry<Integer,Funcionario> funcionarioEntry : listaFuncionario.entrySet()) {
+                System.out.println("\nFuncionário " + indice + ":");
+                System.out.println(funcionarioEntry.getValue().imprimirInfosBasicas());
+                indice++;
             }
         }
     }
