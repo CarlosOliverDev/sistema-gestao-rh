@@ -60,4 +60,4 @@ O diferencial deste projeto é a robustez das validações implementadas. O sist
 git clone https://github.com/CarlosOliverDev/sistema-gestao-rh.git
 ```
 3. Importe o projeto na sua IDE (IntelliJ, Eclipse ou VS Code).
-4. Execute a classe Main.java (ou a classe que contém o método main).
+4. Execute a classe SistemaAdministrador.java.
