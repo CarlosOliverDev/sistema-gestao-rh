@@ -170,20 +170,19 @@ public class SistemaAdministrador {
         }
 
         Duration duracaoTrabalho = Duration.between(horarioInicio, horarioFim);
-        Duration duracaoMaxTempoTrabalho = Duration.ofMinutes(funcionarioCLT.totalHorasPermitidasDia());
-        Duration duracaoJornadaTrabalho = Duration.ofMinutes(funcionarioCLT.totalHorasJornadaDia());
 
-        if(duracaoTrabalho.compareTo(duracaoMaxTempoTrabalho) > 0) {
+        if(duracaoTrabalho.compareTo(funcionarioCLT.getMaxHorasTrabalho()) > 0) {
             throw new RegraNegocioException("Quantidade de Horas trabalhadas maior do que o permitido para esse cargo.");
-        } else if (duracaoTrabalho.compareTo(duracaoJornadaTrabalho) > 0) {
+        } else if (duracaoTrabalho.compareTo(funcionarioCLT.getJornadaTrabalho()) > 0) {
             RelatorioHorariosDia relatorio = new RelatorioHorariosDia(horarioInicio, horarioFim);
-            Duration horasExtras = duracaoTrabalho.minus(duracaoJornadaTrabalho);
+            Duration horasExtras = duracaoTrabalho.minus(funcionarioCLT.getJornadaTrabalho());
             relatorio.setHorasExtras(horasExtras);
             funcionarioCLT.adicionarDiaTrabalhadoComHorario(data, relatorio);
         } else {
             RelatorioHorariosDia relatorio = new RelatorioHorariosDia(horarioInicio, horarioFim);
             funcionarioCLT.adicionarDiaTrabalhadoComHorario(data, relatorio);
         }
+        
         funcionarioCLT.imprimirDiaTrabalho(data);
     }
 
