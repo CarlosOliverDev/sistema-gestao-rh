@@ -141,6 +141,7 @@ public class SistemaAdministrador {
     public static void registrarNovoDiaTrabalho(int idFuncionario) throws RegraNegocioException{
             if(listaFuncionario.get(idFuncionario) instanceof FuncionarioCLT) {
                 LocalDate data = gerarData();
+                //TODO Instância de funcionário.
                 if(!((FuncionarioCLT) listaFuncionario.get(idFuncionario)).existeDataRelatorioTrabalho(data)) {
                     System.out.println("Data - " + data.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
                     try {
@@ -171,7 +172,6 @@ public class SistemaAdministrador {
         System.out.println("Fim do Expediente - " + horarioFim.format(DateTimeFormatter.ofPattern("HH:mm")));
 
         if(horarioInicio.isAfter(horarioFim) || horarioInicio.equals(horarioFim)) {
-            ((FuncionarioCLT) listaFuncionario.get(idFuncionario)).excluirDataRelatorioTrabalho(data);
             throw new RegraNegocioException("Horário de fim de expediente precisa ser depois do horário de início de expediente.");
         }
 
@@ -184,7 +184,6 @@ public class SistemaAdministrador {
                 adicionarHorasExtrasNovoDiaTrabalho(idFuncionario, data, horarioInicio, horarioFim);
             }
         } else {
-            ((FuncionarioCLT) listaFuncionario.get(idFuncionario)).excluirDataRelatorioTrabalho(data);
             throw new RegraNegocioException("Quantidade de Horas trabalhadas maior do que o permitido para esse cargo.");
         }
     }
