@@ -10,13 +10,13 @@ import java.util.TreeMap;
 public abstract class FuncionarioCLT extends Funcionario{
     private double salario;
     private final Duration jornadaTrabalho = Duration.of(8, ChronoUnit.HOURS).plus(getHorarioDeAlmoco());
-    private final Duration maxHorasTrabalho;
+    private final Duration maxHorasExtras;
     private final Map<LocalDate,RelatorioHorariosDia> relatoriosDiasTrabalhados;
 
-    public FuncionarioCLT(String nomeFuncionario, int idadeFuncionario, double salario, Duration maxHorasTrabalho) {
+    public FuncionarioCLT(String nomeFuncionario, int idadeFuncionario, double salario, Duration maxHorasExtras) {
         super(nomeFuncionario, idadeFuncionario);
         this.salario = salario;
-        this.maxHorasTrabalho = maxHorasTrabalho;
+        this.maxHorasExtras = maxHorasExtras;
         this.relatoriosDiasTrabalhados = new TreeMap<LocalDate,RelatorioHorariosDia>();
     }
 
@@ -44,7 +44,7 @@ public abstract class FuncionarioCLT extends Funcionario{
             } else {
                 System.out.println("Esse " + this.getClass().getSimpleName() + " trabalhou por " + relatoriosDiasTrabalhados.size() + " dias.");
             }
-            System.out.print("\nDias Registrados:");
+            System.out.print("\n-Dias Registrados-");
             int dias = 1;
             for(Map.Entry<LocalDate,RelatorioHorariosDia> diasTrabalhados : relatoriosDiasTrabalhados.entrySet()) {
                 System.out.println("\nRegistro dia " + dias + ":");
@@ -75,8 +75,8 @@ public abstract class FuncionarioCLT extends Funcionario{
         return jornadaTrabalho;
     }
 
-    public Duration getMaxHorasTrabalho() {
-        return maxHorasTrabalho;
+    public Duration getMaxHorasExtras() {
+        return maxHorasExtras;
     }
 
     public Map<LocalDate, RelatorioHorariosDia> getRelatoriosDiasTrabalhados() {

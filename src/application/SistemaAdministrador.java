@@ -17,7 +17,7 @@ public class SistemaAdministrador {
     public static Map<Integer, Funcionario> listaFuncionario = new LinkedHashMap<Integer, Funcionario>();
 
     public static void main(String[] args) {
-        System.out.print("Bem-vindo ao Portal de Recursos Humanos.");
+        System.out.println("Bem-vindo ao Portal de Recursos Humanos!");
         apresentarOpcoes();
 
         scanner.close();
@@ -61,6 +61,11 @@ public class SistemaAdministrador {
 
         System.out.print("\nDigite o nome do novo funcionário: ");
         String nomeFuncionario = scanner.nextLine();
+        while(nomeFuncionario.isEmpty()) {
+            System.out.println("Por favor, insira o nome do funcionário.");
+            System.out.print("\nDigite o nome do novo funcionário: ");
+            nomeFuncionario = scanner.nextLine();
+        }
 
         int idadeFuncionario = gerarInteiro("Digite a idade do novo funcionário: ");
         while (idadeFuncionario < 16) {
@@ -171,7 +176,7 @@ public class SistemaAdministrador {
 
         Duration duracaoTrabalho = Duration.between(horarioInicio, horarioFim);
 
-        if(duracaoTrabalho.compareTo(funcionarioCLT.getMaxHorasTrabalho()) > 0) {
+        if(duracaoTrabalho.compareTo(funcionarioCLT.getJornadaTrabalho().plus(funcionarioCLT.getMaxHorasExtras())) > 0) {
             throw new RegraNegocioException("Quantidade de Horas trabalhadas maior do que o permitido para esse cargo.");
         } else if (duracaoTrabalho.compareTo(funcionarioCLT.getJornadaTrabalho()) > 0) {
             RelatorioHorariosDia relatorio = new RelatorioHorariosDia(horarioInicio, horarioFim);
