@@ -247,7 +247,7 @@ public class SistemaAdministrador {
             int indice = 1;
             for(Map.Entry<Integer,Funcionario> funcionarioEntry : listaFuncionario.entrySet()) {
                 System.out.println("\nFuncionário " + indice + ":");
-                System.out.println(funcionarioEntry.getValue().imprimirInfosBasicas());
+                System.out.println(funcionarioEntry.getValue());
                 indice++;
             }
         }
@@ -261,7 +261,7 @@ public class SistemaAdministrador {
             if(!listaFuncionario.containsKey(idFuncionario)) {
                 System.out.println("Não existe um funcionário com esse ID.");
             } else {
-                System.out.println(listaFuncionario.get(idFuncionario).imprimirInfosBasicas());
+                System.out.println(listaFuncionario.get(idFuncionario));
                 buscarInfo(idFuncionario);
             }
         }
