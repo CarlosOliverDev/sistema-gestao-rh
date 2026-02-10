@@ -3,10 +3,10 @@ package application;
 import entities.*;
 import exceptions.RegraNegocioException;
 import java.time.DateTimeException;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.util.InputMismatchException;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -169,26 +169,22 @@ public class SistemaAdministrador {
             throw new RegraNegocioException("Horário de fim de expediente precisa ser depois do horário de início de expediente.");
         }
 
-        int duracao = ((horarioFim.getHour() * 60) + horarioFim.getMinute()) - ((horarioInicio.getHour() * 60) + horarioInicio.getMinute());
+        Duration duracaoTrabalho = Duration.between(horarioInicio, horarioFim);
+        Duration duracaoMaxTempoTrabalho = Duration.ofMinutes(funcionarioCLT.totalHorasPermitidasDia());
+        Duration duracaoJornadaTrabalho = Duration.ofMinutes(funcionarioCLT.totalHorasJornadaDia());
 
-        if(funcionarioCLT.totalHorasPermitidasDia() >= duracao || funcionarioCLT.totalHorasJornadaDia() >= duracao) {
+        if(duracaoTrabalho.compareTo(duracaoMaxTempoTrabalho) > 0) {
+            throw new RegraNegocioException("Quantidade de Horas trabalhadas maior do que o permitido para esse cargo.");
+        } else if (duracaoTrabalho.compareTo(duracaoJornadaTrabalho) > 0) {
+            RelatorioHorariosDia relatorio = new RelatorioHorariosDia(horarioInicio, horarioFim);
+            Duration horasExtras = duracaoTrabalho.minus(duracaoJornadaTrabalho);
+            relatorio.setHorasExtras(horasExtras);
+            funcionarioCLT.adicionarDiaTrabalhadoComHorario(data, relatorio);
+        } else {
             RelatorioHorariosDia relatorio = new RelatorioHorariosDia(horarioInicio, horarioFim);
             funcionarioCLT.adicionarDiaTrabalhadoComHorario(data, relatorio);
-            if(duracao > funcionarioCLT.totalHorasJornadaDia()) {
-                adicionarHorasExtrasNovoDiaTrabalho(funcionarioCLT, data, horarioInicio, horarioFim);
-            }
-            funcionarioCLT.imprimirDiaTrabalho(data);
-        } else {
-            throw new RegraNegocioException("Quantidade de Horas trabalhadas maior do que o permitido para esse cargo.");
         }
-    }
-
-    public static void adicionarHorasExtrasNovoDiaTrabalho(FuncionarioCLT funcionarioCLT, LocalDate data, LocalTime horarioInicio, LocalTime horarioFimHoraExtra) {
-        RelatorioHorariosDia relatorio = new RelatorioHorariosDia(horarioInicio, horarioFimHoraExtra);
-        LocalTime horarioFimJornada = horarioInicio.plus(9, ChronoUnit.HOURS);
-        horarioFimHoraExtra = horarioFimHoraExtra.minus((horarioFimJornada.getHour() * 60) + horarioFimJornada.getMinute(),ChronoUnit.MINUTES);
-        relatorio.setHorasExtras(horarioFimHoraExtra);
-        funcionarioCLT.adicionarDiaTrabalhadoComHorario(data, relatorio);
+        funcionarioCLT.imprimirDiaTrabalho(data);
     }
 
     public static int gerarInteiro(String mensagem) throws InputMismatchException {
