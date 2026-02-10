@@ -1,9 +1,10 @@
 package entities;
 
-import java.time.LocalTime;
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 
 public abstract class Funcionario {
-    private static final LocalTime horarioDeAlmoco = LocalTime.of(1,0);
+    private static final Duration horarioDeAlmoco = Duration.of(1, ChronoUnit.HOURS);
     private static int ID = 1;
 
     private final int id;
@@ -18,7 +19,7 @@ public abstract class Funcionario {
     }
 
     public String imprimirInfosBasicas() {
-        return "Nome: " + this.getNomeFuncionario() + ", ID: " + this.getId() + ", Cargo: " + this.getClass().getSimpleName() + ".";
+        return "Nome: " + this.getNomeFuncionario() + ", ID: " + this.getId() + ", Cargo: " + this.getClass().getSimpleName();
     }
 
     public int getId() {
@@ -43,7 +44,7 @@ public abstract class Funcionario {
         this.idadeFuncionario = idadeFuncionario;
     }
 
-    public LocalTime getHorarioDeAlmoco() {
+    public Duration getHorarioDeAlmoco() {
         return horarioDeAlmoco;
     }
 

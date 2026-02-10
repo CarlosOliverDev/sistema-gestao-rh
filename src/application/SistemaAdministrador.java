@@ -3,10 +3,10 @@ package application;
 import entities.*;
 import exceptions.RegraNegocioException;
 import java.time.DateTimeException;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.util.InputMismatchException;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -128,7 +128,6 @@ public class SistemaAdministrador {
                 System.out.println("Não existe um funcionário com esse ID.");
             } else {
                 System.out.println(listaFuncionario.get(idFuncionario).imprimirInfosBasicas());
-                System.out.println("\n-Registro Trabalho-");
                 try {
                     registrarNovoDiaTrabalho(idFuncionario);
                 } catch (RegraNegocioException e) {
@@ -140,13 +139,13 @@ public class SistemaAdministrador {
 
     public static void registrarNovoDiaTrabalho(int idFuncionario) throws RegraNegocioException{
             if(listaFuncionario.get(idFuncionario) instanceof FuncionarioCLT) {
+                System.out.println("\n-Registro Trabalho-");
                 LocalDate data = gerarData();
-                //TODO Instância de funcionário.
-                if(!((FuncionarioCLT) listaFuncionario.get(idFuncionario)).existeDataRelatorioTrabalho(data)) {
+                FuncionarioCLT funcionarioCLT = (FuncionarioCLT) listaFuncionario.get(idFuncionario);
+                if(!funcionarioCLT.existeDataRelatorioTrabalho(data)) {
                     System.out.println("Data - " + data.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
                     try {
-                        adicionarHorasNovoDiaTrabalho(idFuncionario, data);
-                        imprimirNovoRegistroTrabalho(idFuncionario, data);
+                        adicionarHorasNovoDiaTrabalho(funcionarioCLT, data);
                     } catch (RegraNegocioException e) {
                         System.out.println("Erro: " + e.getMessage());
                     }
@@ -158,12 +157,7 @@ public class SistemaAdministrador {
             }
     }
 
-    private static void imprimirNovoRegistroTrabalho(int idFuncionario, LocalDate data) {
-        System.out.println("\nNovo Registro de Trabalho do " + listaFuncionario.get(idFuncionario).getClass().getSimpleName() + " " + listaFuncionario.get(idFuncionario).getNomeFuncionario() + ":");
-        ((FuncionarioCLT) listaFuncionario.get(idFuncionario)).imprimirDiaTrabalho(data);
-    }
-
-    public static void adicionarHorasNovoDiaTrabalho(int idFuncionario, LocalDate data) throws RegraNegocioException {
+    public static void adicionarHorasNovoDiaTrabalho(FuncionarioCLT funcionarioCLT, LocalDate data) throws RegraNegocioException {
         System.out.println("\n-Início do Expediente-");
         LocalTime horarioInicio = gerarHorasEMinutos("Digite o horário que o funcionário iniciou o trabalho: ");
         System.out.println("Início do Expediente - " + horarioInicio.format(DateTimeFormatter.ofPattern("HH:mm")));
@@ -175,25 +169,21 @@ public class SistemaAdministrador {
             throw new RegraNegocioException("Horário de fim de expediente precisa ser depois do horário de início de expediente.");
         }
 
-        int duracao = ((horarioFim.getHour() * 60) + horarioFim.getMinute()) - ((horarioInicio.getHour() * 60) + horarioInicio.getMinute());
+        Duration duracaoTrabalho = Duration.between(horarioInicio, horarioFim);
 
-        if(((FuncionarioCLT) listaFuncionario.get(idFuncionario)).totalHorasPermitidasDia() >= duracao || ((FuncionarioCLT) listaFuncionario.get(idFuncionario)).totalHorasJornadaDia() >= duracao) {
-            RelatorioHorariosDia relatorio = new RelatorioHorariosDia(horarioInicio, horarioFim);
-            ((FuncionarioCLT) listaFuncionario.get(idFuncionario)).adicionarDiaTrabalhadoComHorario(data, relatorio);
-            if(duracao > ((FuncionarioCLT) listaFuncionario.get(idFuncionario)).totalHorasJornadaDia()) {
-                adicionarHorasExtrasNovoDiaTrabalho(idFuncionario, data, horarioInicio, horarioFim);
-            }
-        } else {
+        if(duracaoTrabalho.compareTo(funcionarioCLT.getMaxHorasTrabalho()) > 0) {
             throw new RegraNegocioException("Quantidade de Horas trabalhadas maior do que o permitido para esse cargo.");
+        } else if (duracaoTrabalho.compareTo(funcionarioCLT.getJornadaTrabalho()) > 0) {
+            RelatorioHorariosDia relatorio = new RelatorioHorariosDia(horarioInicio, horarioFim);
+            Duration horasExtras = duracaoTrabalho.minus(funcionarioCLT.getJornadaTrabalho());
+            relatorio.setHorasExtras(horasExtras);
+            funcionarioCLT.adicionarDiaTrabalhadoComHorario(data, relatorio);
+        } else {
+            RelatorioHorariosDia relatorio = new RelatorioHorariosDia(horarioInicio, horarioFim);
+            funcionarioCLT.adicionarDiaTrabalhadoComHorario(data, relatorio);
         }
-    }
-
-    public static void adicionarHorasExtrasNovoDiaTrabalho(int idFuncionario, LocalDate data, LocalTime horarioInicio, LocalTime horarioFimHoraExtra) {
-        RelatorioHorariosDia relatorio = new RelatorioHorariosDia(horarioInicio, horarioFimHoraExtra);
-        LocalTime horarioFimJornada = horarioInicio.plus(9, ChronoUnit.HOURS);
-        horarioFimHoraExtra = horarioFimHoraExtra.minus((horarioFimJornada.getHour() * 60) + horarioFimJornada.getMinute(),ChronoUnit.MINUTES);
-        relatorio.setHorasExtras(horarioFimHoraExtra);
-        ((FuncionarioCLT) listaFuncionario.get(idFuncionario)).adicionarDiaTrabalhadoComHorario(data, relatorio);
+        
+        funcionarioCLT.imprimirDiaTrabalho(data);
     }
 
     public static int gerarInteiro(String mensagem) throws InputMismatchException {
