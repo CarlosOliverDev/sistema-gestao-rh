@@ -1,12 +1,13 @@
 package entities;
 
+import java.time.Duration;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
 public class RelatorioHorariosDia {
     private final LocalTime horarioInicio;
     private final LocalTime horarioFim;
-    private LocalTime horasExtras = LocalTime.of(0,0);
+    private Duration horasExtras;
 
     public RelatorioHorariosDia(LocalTime horarioInicio, LocalTime horarioFim) {
         this.horarioInicio = horarioInicio;
@@ -15,31 +16,33 @@ public class RelatorioHorariosDia {
 
     public String retornarHorasExtrasString() {
         String horasExtraString = "";
-        if(getHorasExtras() != LocalTime.of(0,0) ) {
+        if(getHorasExtras() != null) {
             horasExtraString += "\nHoras Extras Feitas: ";
-            if(getHorasExtras().getHour() != 0) {
-                if(getHorasExtras().getHour() != 1) {
-                    horasExtraString += getHorasExtras().getHour() + " horas";
+            if(getHorasExtras().toHours() > 0) {
+                if(getHorasExtras().toHours() != 1) {
+                    horasExtraString += getHorasExtras().toHours() + " horas";
                 } else {
-                    horasExtraString += getHorasExtras().getHour() + " hora";
+                    horasExtraString += getHorasExtras().toHours() + " hora";
+                } if(getHorasExtras().toMinutesPart() > 0) {
+                    horasExtraString += " e ";
                 }
             }
-            if(getHorasExtras().getMinute() != 0) {
-                if(getHorasExtras().getMinute() != 1) {
-                    horasExtraString += " " + getHorasExtras().getMinute() + " minutos";
+            if(getHorasExtras().toMinutesPart() > 0) {
+                if(getHorasExtras().toMinutesPart() != 1) {
+                    horasExtraString += getHorasExtras().toMinutesPart() + " minutos";
                 } else {
-                    horasExtraString += " " + getHorasExtras().getMinute() + " minuto";
+                    horasExtraString += getHorasExtras().toMinutesPart() + " minuto";
                 }
             }
         }
         return horasExtraString;
     }
 
-    public LocalTime getHorasExtras() {
+    public Duration getHorasExtras() {
         return horasExtras;
     }
 
-    public void setHorasExtras(LocalTime horasExtras) {
+    public void setHorasExtras(Duration horasExtras) {
         this.horasExtras = horasExtras;
     }
 
