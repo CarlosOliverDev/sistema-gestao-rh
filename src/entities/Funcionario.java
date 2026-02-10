@@ -18,7 +18,7 @@ public abstract class Funcionario {
     }
 
     public String imprimirInfosBasicas() {
-        return "Nome: " + this.getNomeFuncionario() + ", ID: " + this.getId() + ", Cargo: " + this.getClass().getSimpleName() + ".";
+        return "Nome: " + this.getNomeFuncionario() + ", ID: " + this.getId() + ", Cargo: " + this.getClass().getSimpleName();
     }
 
     public int getId() {

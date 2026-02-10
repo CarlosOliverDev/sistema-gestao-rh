@@ -31,7 +31,6 @@ public class RelatorioHorariosDia {
                     horasExtraString += " " + getHorasExtras().getMinute() + " minuto";
                 }
             }
-            horasExtraString +=  ".";
         }
         return horasExtraString;
     }
